@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <title>TikTok Connection – Smaug Studios</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="hero">
+    <div class="wrap">
+      <img class="hero-logo" src="/assets/logo.png" alt="Smaug Studios logo">
+      <h1 id="title">Connecting TikTok&hellip;</h1>
+      <p class="lead" id="msg"></p>
+      <div class="actions" id="code-row" hidden>
+        <code id="code" style="font-size:15px;padding:10px 14px;max-width:100%;overflow-wrap:anywhere"></code>
+        <button class="btn btn-gold" id="copy" type="button" style="border:0;cursor:pointer">Copy code</button>
+      </div>
+      <p class="lead" id="state" style="font-size:14px" hidden></p>
+      <div class="actions"><a class="btn btn-ghost" href="/">Back to home</a></div>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var code = q.get('code'), state = q.get('state');
+      var err = q.get('error'), errDesc = q.get('error_description');
+      var $ = function (id) { return document.getElementById(id); };
+
+      // Remove the code from the address bar and browser history.
+      if (location.search) history.replaceState(null, '', location.pathname);
+
+      if (err) {
+        $('title').textContent = 'TikTok connection failed';
+        $('msg').textContent = errDesc || err;
+      } else if (code) {
+        $('title').textContent = 'TikTok connected';
+        $('msg').textContent = 'Paste this one-time code into Smaug Studios Publisher. It expires in a few minutes and works only once.';
+        $('code').textContent = code;
+        $('code-row').hidden = false;
+        if (state) { $('state').textContent = 'State: ' + state; $('state').hidden = false; }
+        $('copy').addEventListener('click', function () {
+          var b = this;
+          navigator.clipboard.writeText(code).then(function () {
+            b.textContent = 'Copied!';
+            setTimeout(function () { b.textContent = 'Copy code'; }, 1500);
+          }, function () { b.textContent = 'Copy failed: select the text'; });
+        });
+      } else {
+        $('title').textContent = 'TikTok sign-in for Smaug Studios Publisher';
+        $('msg').textContent = 'After you authorize Smaug Studios Publisher on TikTok, you are sent back here. This page then shows the one-time code that finishes the connection.';
+      }
+    })();
+  </script>
+</body>
+</html>
