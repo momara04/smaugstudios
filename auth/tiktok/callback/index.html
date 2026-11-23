@@ -36,7 +36,16 @@
       if (err) {
         $('title').textContent = 'TikTok connection failed';
         $('msg').textContent = errDesc || err;
-      } else if (code) {
+      } else if (code && (function () {
+        var saved = null;
+        try { saved = sessionStorage.getItem('tiktok_oauth_state'); sessionStorage.removeItem('tiktok_oauth_state'); } catch (e) {}
+        if (saved && saved !== state) {
+          $('title').textContent = 'TikTok connection blocked';
+          $('msg').textContent = 'This sign-in did not come from our Connect page, so the code was not shown. Start again from smaugstudios.com/connect.';
+          return false;
+        }
+        return true;
+      })()) {
         $('title').textContent = 'TikTok connected';
         $('msg').textContent = 'Paste this one-time code into Smaug Studios Publisher. It expires in a few minutes and works only once.';
         $('code').textContent = code;
@@ -49,7 +58,7 @@
             setTimeout(function () { b.textContent = 'Copy code'; }, 1500);
           }, function () { b.textContent = 'Copy failed: select the text'; });
         });
-      } else {
+      } else if (!code) {
         $('title').textContent = 'TikTok sign-in for Smaug Studios Publisher';
         $('msg').textContent = 'After you authorize Smaug Studios Publisher on TikTok, you are sent back here. This page then shows the one-time code that finishes the connection.';
       }
